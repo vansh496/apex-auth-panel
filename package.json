@@ -1,0 +1,19 @@
+{
+  "name": "apex-auth",
+  "version": "1.0.0",
+  "description": "KeyAuth style auth + loader control panel (online / offline / maintenance)",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js --dev"
+  },
+  "engines": {
+    "node": "24.x"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.8.0",
+    "express": "^4.21.2"
+  },
+  "license": "MIT"
+}
