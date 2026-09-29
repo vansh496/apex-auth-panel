@@ -13,6 +13,22 @@ const DATA_DIR = path.join(__dirname, 'data');
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
 const DB_PATH = path.join(DATA_DIR, 'panel.db');
+
+/* GitHub mirror: boot se pehle snapshot restore.
+   Sirf tab chalta hai jab BACKUP_TOKEN + BACKUP_REPO set hon (Render par),
+   aur restore tab hi hota hai jab local DB missing/seed-jaisa ho. */
+if (process.env.BACKUP_TOKEN && process.env.BACKUP_REPO) {
+  try {
+    require('node:child_process').execFileSync(
+      process.execPath,
+      [path.join(__dirname, 'backup.js'), 'pull'],
+      { stdio: 'inherit', timeout: 90000, env: { ...process.env, BACKUP_DB_PATH: DB_PATH } }
+    );
+  } catch (e) {
+    console.error('  [backup] pull failed:', e.message);
+  }
+}
+
 const db = new DatabaseSync(DB_PATH);
 
 db.exec('PRAGMA journal_mode = WAL;');
