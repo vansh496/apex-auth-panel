@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Console - APEX AUTH</title>
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%236366f1'/><text x='50' y='68' font-size='56' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>B</text></svg>">
+</head>
+<body>
+<div class="console">
+  <!-- ============================ SIDEBAR ============================ -->
+  <aside class="side">
+    <div class="side-head">
+      <div class="box">⚡</div>
+      <div>
+        <b id="side-brand">APEX AUTH</b>
+        <span>Console</span>
+      </div>
+    </div>
+
+    <nav class="side-nav">
+      <div class="lbl">Overview</div>
+      <button class="side-item" data-sec="dashboard"><span class="ico">▦</span> Dashboard</button>
+      <button class="side-item" data-sec="loaders" data-admin><span class="ico">⚙</span> Loaders</button>
+
+      <div class="lbl">Management</div>
+      <button class="side-item" data-sec="customers" data-admin><span class="ico">👥</span> Customers</button>
+      <button class="side-item" data-sec="licenses"><span class="ico">🔑</span> Licenses</button>
+
+      <div class="lbl">Operations</div>
+      <button class="side-item" data-sec="logs" data-admin><span class="ico">🕘</span> Activity Log</button>
+      <button class="side-item" data-sec="settings"><span class="ico">🛠</span> Settings</button>
+    </nav>
+
+    <div class="side-foot">
+      <div class="api-state" id="api-state"><span class="d"></span> API connected</div>
+      <div class="me-card">
+        <div class="avatar" id="me-avatar">A</div>
+        <div>
+          <div class="nm" id="me-name">—</div>
+          <div class="rl" id="me-role">—</div>
+        </div>
+        <button class="icon-btn" id="logout" title="Sign out">⏻</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============================= MAIN ============================== -->
+  <div class="main">
+    <header class="topbar">
+      <div class="crumb">
+        <span class="a">Console</span><span class="a">/</span><b class="b" id="crumb">Dashboard</b>
+      </div>
+      <div class="jump" id="jump">🔍 Jump to… <kbd>Ctrl K</kbd></div>
+      <div class="avatar blue" id="top-avatar">A</div>
+    </header>
+
+    <div class="content">
+      <!-- ------------------------- DASHBOARD ------------------------- -->
+      <section class="sec" id="sec-dashboard">
+        <div class="page-head">
+          <div>
+            <h1>System Overview <span class="ver" id="dash-ver">v1.0.0</span></h1>
+            <p>Live statistics, loader health &amp; maintenance control</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn" id="dash-refresh">⟳ Refresh</button>
+          </div>
+        </div>
+
+        <div id="dash-banner"></div>
+        <div class="stats" id="dash-stats"></div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div class="pi">⚡</div>
+            <div>
+              <h3>Loader Status</h3>
+              <div class="s">online · offline · maintenance switch</div>
+            </div>
+          </div>
+          <div id="dash-loaders"></div>
+        </div>
+
+        <div class="grid-2eq mt">
+          <div class="panel">
+            <div class="panel-head">
+              <div class="pi">🕘</div>
+              <div><h3>Recent Activity</h3><div class="s">latest events</div></div>
+            </div>
+            <div class="logs" id="dash-logs"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <div class="pi">🔑</div>
+              <div><h3 id="dash-side-title">My Subscription</h3><div class="s" id="dash-side-sub">license overview</div></div>
+            </div>
+            <div id="dash-side"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- -------------------------- LOADERS -------------------------- -->
+      <section class="sec" id="sec-loaders">
+        <div class="page-head">
+          <div>
+            <h1>Loader Control <span class="ver" id="loaders-count">0</span></h1>
+            <p>Push a loader online, offline or into maintenance mode</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn primary" id="new-loader">＋ New Loader</button>
+          </div>
+        </div>
+        <div id="loaders-banner"></div>
+
+        <!-- ------------------- loader credentials ------------------- -->
+        <div class="panel" id="creds-panel">
+          <div class="panel-head">
+            <div class="pi">🔑</div>
+            <div>
+              <h3>Loader Credentials</h3>
+              <div class="s">app name · app id · secret · version — yahi values C++ loader me jaati hain</div>
+            </div>
+            <select class="inp-box" id="cred-app" style="width:auto;max-width:230px;margin-left:auto"></select>
+          </div>
+
+          <div class="kv">
+            <div class="c"><div class="k2">App name / slug (username)</div><div class="v mono" id="cred-name">—</div></div>
+            <div class="c"><div class="k2">App ID (user id)</div><div class="v mono" id="cred-id">—</div></div>
+            <div class="c"><div class="k2">Secret</div>
+              <div class="v mono"><span id="cred-secret">—</span>
+                <button class="a-btn" id="cred-eye" title="Show / hide secret">👁</button></div></div>
+            <div class="c"><div class="k2">Version</div><div class="v mono" id="cred-ver">—</div></div>
+          </div>
+
+          <div class="bar">
+            <div class="t">API secret</div>
+            <div class="acts" style="flex:1;justify-content:flex-start">
+              <label class="check"><input type="checkbox" id="cred-req">
+                <span class="tiny">Har loader call par secret verify karo (403 BAD_SECRET)</span></label>
+            </div>
+            <div class="acts">
+              <button class="btn" id="cred-copy">⧉ Copy all</button>
+              <button class="btn" id="cred-snippet">⧉ Copy C++ snippet</button>
+              <button class="btn" id="cred-regen">♻ Regenerate secret</button>
+            </div>
+          </div>
+
+          <pre class="cred-code mono" id="cred-code"></pre>
+          <div class="hint">Secret <b>public API</b> me kabhi nahi jata — sirf admin panel me dikhta hai. Regenerate karne par purana secret turant kaam karna band kar deta hai.</div>
+        </div>
+
+        <!-- ------------------- product credentials (per product) ------------------- -->
+        <div class="panel" id="pcreds-panel">
+          <div class="panel-head">
+            <div class="pi">🧩</div>
+            <div>
+              <h3>Product Credentials</h3>
+              <div class="s">har product ka apna app id · secret · version — per-build lock</div>
+            </div>
+            <select class="inp-box" id="pcred-sel" style="width:auto;max-width:300px;margin-left:auto"></select>
+          </div>
+
+          <div class="kv">
+            <div class="c"><div class="k2">Product (username)</div><div class="v mono" id="pcred-name">—</div></div>
+            <div class="c"><div class="k2">App ID (user id)</div><div class="v mono" id="pcred-id">—</div></div>
+            <div class="c"><div class="k2">Secret</div>
+              <div class="v mono"><span id="pcred-secret">—</span>
+                <button class="a-btn" id="pcred-eye" title="Show / hide secret">👁</button></div></div>
+            <div class="c"><div class="k2">Version</div><div class="v mono" id="pcred-ver">—</div></div>
+          </div>
+
+          <div class="bar">
+            <div class="t">Product API secret</div>
+            <div class="acts" style="flex:1;justify-content:flex-start">
+              <label class="check"><input type="checkbox" id="pcred-req">
+                <span class="tiny">Sirf is product par secret verify karo (403 BAD_SECRET)</span></label>
+            </div>
+            <div class="acts">
+              <button class="btn" id="pcred-copy">⧉ Copy all</button>
+              <button class="btn" id="pcred-snippet">⧉ Copy C++ snippet</button>
+              <button class="btn" id="pcred-regen">♻ Regenerate secret</button>
+            </div>
+          </div>
+
+          <pre class="cred-code mono" id="pcred-code"></pre>
+          <div class="hint">Loader har call me apna product bhejta hai — <b>{"product":"Internal"}</b> (id / naam / slug, teeno chalte hain).
+            Sirf us product ka secret verify hota hai, baaki product free chalte rahenge.
+            Product secret <b>admin se bahar nahi jata</b> (reseller / public API ko nahi milta).</div>
+        </div>
+
+        <div class="loader-grid" id="loader-grid"></div>
+      </section>
+
+      <!-- ------------------------- CUSTOMERS ------------------------- -->
+      <section class="sec" id="sec-customers">
+        <div class="page-head">
+          <div>
+            <h1>User Directory <span class="ver" id="users-count">0 Registered</span></h1>
+            <p>Inspect client telemetry, reset HWID locks and manage subscriptions</p>
+          </div>
+          <div class="head-actions">
+            <div class="search"><span class="i">🔍</span><input id="user-search" placeholder="Search username, HWID…"></div>
+            <button class="btn primary" id="add-user">＋ Add User</button>
+          </div>
+        </div>
+
+        <div class="stats" id="user-stats"></div>
+
+        <div class="bar">
+          <div class="t">Bulk Actions:</div>
+          <div class="acts">
+            <button class="btn" data-ubulk="reset_hwid">↺ Reset All HWIDs</button>
+            <button class="btn" data-ubulk="unban_all">✓ Unban All</button>
+            <button class="btn danger" data-ubulk="ban_all">⊘ Ban All</button>
+            <button class="btn danger" data-ubulk="purge_users">🗑 Purge All Users</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>User Profile</th><th>Status &amp; Plan</th><th>Bound HWID</th><th>Last Login</th>
+              <th style="text-align:right">Actions</th>
+            </tr></thead>
+            <tbody id="users-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- -------------------------- LICENSES ------------------------- -->
+      <section class="sec" id="sec-licenses">
+        <div class="page-head">
+          <div>
+            <h1>License Key Engine <span class="ver" id="lic-ver">Crypto Auth</span></h1>
+            <p>Generate, distribute and cryptographically bind hardware licenses</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn" id="lic-export">⤓ Export</button>
+            <button class="btn" id="lic-refresh">⟳ Refresh</button>
+          </div>
+        </div>
+
+        <div class="stats" id="lic-stats"></div>
+
+        <div class="bar" id="prod-bar">
+          <div class="t">Products:</div>
+          <div class="acts" id="prod-chips" style="flex:1;justify-content:flex-start"></div>
+          <div class="acts">
+            <div class="inp-ic" style="width:190px"><span class="i">🏷</span>
+              <input class="inp-box" id="prod-name" placeholder="New product name" maxlength="40"></div>
+            <button class="btn primary" id="prod-add">＋ Add</button>
+          </div>
+        </div>
+
+        <div class="bar" id="lic-bulk-bar">
+          <div class="t">Bulk Operations:</div>
+          <div class="acts">
+            <button class="btn" data-kbulk="reset_hwid">↺ Reset All HWIDs</button>
+            <button class="btn" data-kbulk="pause_all">⏸ Pause All</button>
+            <button class="btn" data-kbulk="resume_all">▶ Resume All</button>
+            <button class="btn danger" data-kbulk="delete_unused">🗑 Delete Unused</button>
+            <button class="btn danger" data-kbulk="purge">🔥 Purge All Keys</button>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <!-- generator -->
+          <div class="panel" id="gen-panel">
+            <div class="panel-head">
+              <div class="pi">🔑</div>
+              <div><h3>Key Generator</h3><div class="s">Issue access tokens</div></div>
+            </div>
+
+            <label class="lbl">Product</label>
+            <select class="inp-box" id="g-app"></select>
+
+            <label class="lbl">Product</label>
+            <select class="inp-box" id="g-product"></select>
+
+            <label class="lbl">Subscription Plan</label>
+            <select class="inp-box" id="g-plan">
+              <option value="1">Daily — 1 Day <span>· 1 days</span></option>
+              <option value="7">Weekly — 7 Days</option>
+              <option value="30" selected>Monthly — 30 Days</option>
+              <option value="90">Quarterly — 90 Days</option>
+              <option value="365">Yearly — 365 Days</option>
+              <option value="0">Lifetime — Permanent</option>
+            </select>
+
+            <label class="lbl">Key Prefix <span style="text-transform:none;letter-spacing:0">(optional)</span></label>
+            <div class="inp-ic"><span class="i">#</span><input class="inp-box" id="g-prefix" value="apex" placeholder="apex" maxlength="16"></div>
+            <div class="hint">Preview: <b id="g-preview">APEX-XXXX-XXXX-XXXX</b></div>
+
+            <label class="lbl">Custom Key <span style="text-transform:none;letter-spacing:0">optional override</span></label>
+            <div class="inp-ic"><span class="i">⌘</span><input class="inp-box" id="g-custom" placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="40"></div>
+
+            <label class="lbl">Quantity</label>
+            <div class="inp-ic"><span class="i">#</span><input class="inp-box" id="g-count" type="number" min="1" max="100" value="1"></div>
+            <div class="hint">Max 100 per batch</div>
+
+            <label class="lbl">User Limit</label>
+            <div class="seg" id="g-limit">
+              <button class="active g" data-limit="1">👤 Single User</button>
+              <button data-limit="0">👥 Unlimited</button>
+            </div>
+            <div class="hint" id="g-limit-hint">One account can redeem this key</div>
+
+            <button class="btn primary block" id="g-gen" style="margin-top:18px">✨ Generate Licenses</button>
+
+            <div class="keys-out" id="g-out">
+              <div class="hd"><span id="g-out-n">0 Generated</span>
+                <span><button class="btn sm" id="g-copyall">Copy All</button>
+                <button class="btn sm" id="g-clear">Clear</button></span>
+              </div>
+              <div class="keys-list" id="g-keys"></div>
+            </div>
+          </div>
+
+          <!-- key list -->
+          <div class="panel">
+            <div class="between" style="margin-bottom:14px">
+              <div>
+                <h3 style="font-size:13.5px;letter-spacing:.6px;text-transform:uppercase">Active License Keys</h3>
+                <div class="s muted tiny" id="lic-matching">0 matching licenses in register</div>
+              </div>
+              <div class="flex">
+                <div class="search" style="max-width:230px"><span class="i">🔍</span>
+                  <input id="key-search" placeholder="Search keys, users…"></div>
+              </div>
+            </div>
+
+            <div class="toolbar" id="key-filters">
+              <button class="toggle-chip on" data-kf="all">All</button>
+              <button class="toggle-chip" data-kf="active">Active</button>
+              <button class="toggle-chip" data-kf="unused">Unused</button>
+              <button class="toggle-chip" data-kf="expired">Expired</button>
+              <button class="toggle-chip" data-kf="revoked">Revoked</button>
+              <select class="inp-box" id="key-app-filter" style="width:auto;max-width:170px"></select>
+              <select class="inp-box" id="key-product-filter" style="width:auto;max-width:170px"></select>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead><tr>
+                  <th>License Key</th><th>Product</th><th>Plan</th><th>Status</th><th>Expires</th>
+                  <th style="text-align:right">Actions</th>
+                </tr></thead>
+                <tbody id="keys-body"></tbody>
+              </table>
+            </div>
+            <div id="keys-empty"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- --------------------------- LOGS ---------------------------- -->
+      <section class="sec" id="sec-logs">
+        <div class="page-head">
+          <div>
+            <h1>Activity Log <span class="ver" id="logs-count">0</span></h1>
+            <p>Every login, key event and admin action with timestamp</p>
+          </div>
+          <div class="head-actions">
+            <button class="btn" id="logs-refresh">⟳ Refresh</button>
+            <button class="btn danger" id="logs-clear">🗑 Clear</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="logs" id="logs-list"></div>
+        </div>
+      </section>
+
+      <!-- -------------------------- SETTINGS ------------------------- -->
+      <section class="sec" id="sec-settings">
+        <div class="page-head">
+          <div>
+            <h1>Settings</h1>
+            <p>Site configuration and account security</p>
+          </div>
+        </div>
+
+        <div class="grid-2eq">
+          <div class="panel" id="site-settings-panel">
+            <div class="panel-head">
+              <div class="pi">🌐</div>
+              <div><h3>Site Settings</h3><div class="s">public configuration</div></div>
+            </div>
+            <label class="lbl">Site name</label>
+            <input class="inp-box" id="s-name">
+            <label class="lbl">Site URL</label>
+            <input class="inp-box" id="s-url" placeholder="https://your-domain.com">
+            <label class="lbl">Discord invite</label>
+            <input class="inp-box" id="s-discord" placeholder="https://discord.gg/…">
+            <label class="lbl">Discord webhook — realtime audit <span class="s">sirf key use / account delete</span></label>
+            <input class="inp-box" id="s-hook" placeholder="https://discord.com/api/webhooks/…">
+            <div class="s" style="margin:-6px 0 12px">
+              Har key use par Discord me embed aayega — 🌐 IP · 📍 Location (city, country) ·
+              🔑 HWID · 🧩 Product · 💳 Plan · ⏳ Expiry · 🎟 masked key.
+            </div>
+            <label class="lbl">Owner</label>
+            <input class="inp-box" id="s-owner">
+            <label class="lbl">Session lifetime (days)</label>
+            <input class="inp-box" id="s-days" type="number" min="1" max="365">
+            <label class="lbl">Registration</label>
+            <div class="seg" id="s-signup">
+              <button class="active g" data-open="1">Open</button>
+              <button data-open="0">Closed</button>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:18px;flex-wrap:wrap">
+              <button class="btn primary" id="s-save">💾 Save Settings</button>
+              <button class="btn" id="s-hook-test">🔔 Send test</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div class="pi">🔒</div>
+              <div><h3>Account Security</h3><div class="s">change your password</div></div>
+            </div>
+            <label class="lbl">Current password</label>
+            <input class="inp-box" id="p-old" type="password" autocomplete="current-password">
+            <label class="lbl">New password</label>
+            <input class="inp-box" id="p-new" type="password" autocomplete="new-password">
+            <label class="lbl">Confirm new password</label>
+            <input class="inp-box" id="p-new2" type="password" autocomplete="new-password">
+            <button class="btn primary" id="p-save" style="margin-top:18px">Change Password</button>
+
+            <div class="maint-banner mt" style="margin-bottom:0">
+              <div>ℹ️</div>
+              <div><b>Default admin login</b>
+                First run creates <span class="mono">admin / admin123</span> — change it immediately
+                (or set <span class="mono">ADMIN_PASSWORD</span> env before first boot).
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- quick palette -->
+<div class="palette-bg" id="palette-bg">
+  <div class="palette">
+    <input id="palette-input" placeholder="Jump to a page or action…" autocomplete="off">
+    <div class="items" id="palette-items"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="/assets/js/api.js"></script>
+<script src="/assets/js/app.js"></script>
+</body>
+</html>
