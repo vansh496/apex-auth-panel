@@ -19,6 +19,7 @@ const {
   createSession, getSession, destroySession
 } = db;
 const webhook = require('./webhook');
+const backup = require('./backup');
 
 /** fire-and-forget Discord audit (loader ko kabhi slow nahi karna) */
 function audit(promise) {
@@ -1140,4 +1141,6 @@ app.listen(PORT, () => {
     console.log(`  Admin   : ${a ? a.username : 'admin'} — login panel se karein (password badal chuka ho to)`);
   }
   console.log('');
+  /* Render free = ephemeral disk -> data ko GitHub repo me mirror karo */
+  backup.start(db);
 });
