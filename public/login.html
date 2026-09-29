@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sign In - APEX AUTH</title>
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23e11d48'/><text x='50' y='68' font-size='56' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>B</text></svg>">
+</head>
+<body class="role-admin">
+<div class="auth">
+  <!-- ================= left brand panel ================= -->
+  <div class="auth-left">
+    <div class="brand-lockup">
+      <div class="box">🛡</div>
+      <div>
+        <b id="brand">APEX AUTH</b>
+        <span>Authentication Engine</span>
+      </div>
+    </div>
+
+    <div class="inner">
+      <div class="eyebrow" id="eyebrow">⚡ Next-Gen Security Node v3.2</div>
+      <h1 class="auth-headline" id="headline">Unified Auth &amp; Remote Control</h1>
+      <p class="auth-sub" id="subline">
+        Centralized cloud authentication portal engineered for zero-trust authorization,
+        hardware locking and real-time execution telemetry.
+      </p>
+
+      <div class="feature-2">
+        <div class="f">
+          <b id="f1-t">🔒 Hardware Locking</b>
+          <p id="f1-d">Unique machine hardware signature is bound on first key activation.</p>
+        </div>
+        <div class="f">
+          <b id="f2-t">⚡ Live Execution Control</b>
+          <p id="f2-d">Push loader online / offline / maintenance state in under a second.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= right auth card ================= -->
+  <div class="auth-right">
+    <div class="auth-card">
+      <div class="between">
+        <div>
+          <h2 id="card-title">Sign In</h2>
+          <div class="sub" id="card-sub">Master System Infrastructure &amp; Control</div>
+        </div>
+        <div class="secure-tag">● Node Secure</div>
+      </div>
+
+      <div class="role-tabs" id="role-tabs">
+        <button data-role="admin" class="active">🛡 Admin</button>
+        <button data-role="reseller">🤝 Reseller</button>
+        <button data-role="client">👤 Client</button>
+      </div>
+
+      <form id="auth-form" autocomplete="on">
+        <label class="flabel">Username</label>
+        <div class="inp-wrap">
+          <span class="ic">👤</span>
+          <input class="inp" id="username" name="username" placeholder="Enter username" autocomplete="username" required>
+        </div>
+
+        <label class="flabel">Password</label>
+        <div class="inp-wrap">
+          <span class="ic">🔒</span>
+          <input class="inp" id="password" name="password" type="password" placeholder="••••••••" autocomplete="current-password" required>
+          <button type="button" class="eye" id="eye">👁</button>
+        </div>
+
+        <div id="extra-fields" class="hidden">
+          <label class="flabel">Confirm password</label>
+          <div class="inp-wrap">
+            <span class="ic">🔒</span>
+            <input class="inp" id="password2" type="password" placeholder="••••••••">
+          </div>
+          <label class="flabel">Discord <span style="text-transform:none;letter-spacing:0">(optional)</span></label>
+          <div class="inp-wrap">
+            <span class="ic">#</span>
+            <input class="inp" id="discord" placeholder="username">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="check"><input type="checkbox" id="remember" checked> Remember username</label>
+          <button type="button" class="link" id="forgot">Forgot access?</button>
+        </div>
+
+        <div class="form-error" id="err"></div>
+
+        <button class="submit" id="submit" type="submit">
+          <span id="submit-txt">Sign in to Admin</span> <span>→</span>
+        </button>
+
+        <div class="alt-note" id="alt-note">
+          <span id="alt-txt">No account yet?</span>
+          <button type="button" class="link" id="switch-mode">Create one →</button>
+        </div>
+        <div class="alt-note hidden" id="signup-hint" style="line-height:1.6">
+          Sign-up sirf <b>Client</b> account banata hai —<br>
+          Reseller / Admin accounts owner panel se bante hain.
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/js/api.js"></script>
+<script>
+let role = 'admin', mode = 'login';
+
+const copy = {
+  admin: {
+    eyebrow: '⚡ Next-Gen Security Node v3.2',
+    headline: 'Unified Auth &amp; Remote Control',
+    sub: 'Centralized cloud authentication portal engineered for zero-trust authorization, hardware locking and real-time execution telemetry.',
+    sub2: 'Admin console access — loaders, customers, licenses and live maintenance control.',
+    cardSub: 'Master System Infrastructure &amp; Control',
+    submit: 'Sign in to Admin',
+    role: 'owner',
+    f1: ['🔒 Hardware Locking', 'Unique machine hardware signature is bound on first key activation.'],
+    f2: ['⚡ Live Execution Control', 'Push loader online / offline / maintenance state in under a second.']
+  },
+  reseller: {
+    eyebrow: '⚡ Sub-User / Reseller Node',
+    headline: 'Reseller &amp; Sub-User Console',
+    sub: 'Bulk generate license keys and track redemptions. Customers, loader status, logs and site settings stay with the owner.',
+    sub2: 'Reseller (sub-user) accounts are created by the owner — sign in with the credentials you were given.',
+    cardSub: 'License Credits &amp; Bulk Distribution',
+    submit: 'Sign in to Reseller',
+    role: 'reseller',
+    f1: ['🔑 Bulk Key Engine', 'Ek click me 100 prefixed license keys banao aur redemptions track karo.'],
+    f2: ['📊 Your Redemptions', 'Apni generated keys, expiry aur HWID status ek jagah dekho.']
+  },
+  client: {
+    eyebrow: '⚡ Client Access Node',
+    headline: 'Client Access &amp; License Hub',
+    sub: 'Track your subscriptions, bind your machine HWID and see loader status in real time — no reseller middle-man required.',
+    sub2: 'Create your client account and redeem the license key you received.',
+    cardSub: 'License Credits &amp; Subscription Access',
+    submit: 'Sign in to Client',
+    f1: ['🔒 Hardware Locking', 'Key pehli activation par machine se bind ho jata hai — reset bhi kar sakte ho.'],
+    f2: ['📦 Product &amp; Subscription', 'Internal / External / Silent Aim / Silent Cover — plan aur expiry ek jagah.']
+  }
+};
+
+function render() {
+  document.body.className = 'role-' + role;
+  const c = copy[role];
+  document.getElementById('eyebrow').innerHTML = c.eyebrow;
+  document.getElementById('headline').innerHTML = mode === 'register' ? 'Create Your Console Account' : c.headline;
+  document.getElementById('subline').innerHTML = mode === 'register' ? c.sub2 : c.sub;
+  document.getElementById('card-title').textContent = mode === 'register' ? 'Create Account' : 'Sign In';
+  document.getElementById('card-sub').innerHTML = mode === 'register' ? 'Register a new client identity' : c.cardSub;
+  document.getElementById('submit-txt').textContent = mode === 'register' ? 'Create account' : c.submit;
+  document.getElementById('extra-fields').classList.toggle('hidden', mode !== 'register');
+  const canRegister = mode === 'register' || role === 'client';
+  document.getElementById('alt-note').classList.toggle('hidden', !canRegister);
+  document.getElementById('signup-hint').classList.toggle('hidden', canRegister);
+  document.getElementById('alt-txt').textContent = mode === 'register' ? 'Already registered?' : 'No account yet?';
+  document.getElementById('switch-mode').textContent = mode === 'register' ? 'Sign in →' : 'Create one →';
+  document.getElementById('forgot').classList.toggle('hidden', mode === 'register');
+  document.getElementById('f1-t').innerHTML = c.f1[0];
+  document.getElementById('f1-d').textContent = c.f1[1];
+  document.getElementById('f2-t').innerHTML = c.f2[0];
+  document.getElementById('f2-d').textContent = c.f2[1];
+  $$('#role-tabs button').forEach(b => b.classList.toggle('active', b.dataset.role === role));
+}
+
+$$('#role-tabs button').forEach(b => b.onclick = () => {
+  role = b.dataset.role;
+  if (mode === 'register' && role !== 'client') mode = 'login';   // register sirf client tab par
+  if (mode === 'login' && role === 'client') location.hash = '#client'; else location.hash = '';
+  document.getElementById('err').classList.remove('show');
+  render();
+});
+
+document.getElementById('switch-mode').onclick = () => {
+  if (mode === 'login') role = 'client';                          // "Create one" hamesha client flow
+  mode = mode === 'login' ? 'register' : 'login';
+  document.getElementById('err').classList.remove('show');
+  render();
+};
+
+function roleMismatch(want, got) {
+  const name = r => r === 'admin' ? 'Admin' : r === 'reseller' ? 'Reseller (sub-user)' : 'Client';
+  if (want === 'client') return `${name(got)} account — use the ${name(got)} tab to sign in.`;
+  return `This is a ${name(got)} account. Switch to the ${name(got)} tab.`;
+}
+
+document.getElementById('eye').onclick = () => {
+  const p = document.getElementById('password');
+  p.type = p.type === 'password' ? 'text' : 'password';
+};
+
+document.getElementById('forgot').onclick = () =>
+  toast('Contact support', 'Password reset ke liye admin se contact karein.', 'err');
+
+const rememberName = localStorage.getItem('bk_user');
+if (rememberName) document.getElementById('username').value = rememberName;
+
+document.getElementById('auth-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const err = document.getElementById('err');
+  const btn = document.getElementById('submit');
+  err.classList.remove('show');
+
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  const password2 = document.getElementById('password2').value;
+  const discord = document.getElementById('discord').value.trim();
+
+  if (mode === 'register' && password !== password2) {
+    err.textContent = 'Passwords do not match.'; err.classList.add('show'); return;
+  }
+
+  btn.disabled = true;
+  try {
+    const path = mode === 'register' ? '/api/auth/register' : '/api/auth/login';
+    const d = await API.post(path, { username, password, discord });
+    API.setToken(d.token);
+    if (document.getElementById('remember').checked) localStorage.setItem('bk_user', username);
+    else localStorage.removeItem('bk_user');
+
+    /* tab ke mutabiq role check — galat tab par login nahi hona chahiye */
+    const want = mode === 'register' ? 'client' : role;   // 'admin' | 'reseller' | 'client'
+    const got = d.user.role;                              // 'admin' | 'reseller' | 'user'
+    const ok = want === 'client' ? got === 'user' : got === want;
+    if (!ok) {
+      API.setToken('');
+      err.textContent = roleMismatch(want, got);
+      err.classList.add('show');
+      btn.disabled = false;
+      return;
+    }
+
+    toast(mode === 'register' ? 'Account created' : 'Welcome back', d.user.username);
+    setTimeout(() => location.href = '/app.html', 350);
+  } catch (ex) {
+    err.textContent = ex.message;
+    err.classList.add('show');
+    btn.disabled = false;
+  }
+});
+
+if (location.hash === '#client') role = 'client';
+render();
+</script>
+</body>
+</html>
