@@ -12,7 +12,6 @@
     "node": "24.x"
   },
   "dependencies": {
-    "@vercel/blob": "^2.8.0",
     "express": "^4.21.2"
   },
   "license": "MIT"
