@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>APEX AUTH - Auth Engine</title>
+<meta name="description" content="Next-Gen Cyber Security & Auth — license and loader control console.">
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%23e11d48'/><text x='50' y='68' font-size='56' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>B</text></svg>">
+</head>
+<body>
+<div class="landing">
+  <div class="scene"></div>
+  <div class="grid-lines"></div>
+
+  <div class="landing-top">
+    <div class="brand-mini">
+      <div class="mark">B</div>
+      <div>
+        <div id="brand-name">APEX AUTH</div>
+        <div class="tiny muted up" style="letter-spacing:2px">Authentication Engine</div>
+      </div>
+      <div class="pill online" id="site-pill" style="margin-left:14px"><span class="d"></span> All systems online</div>
+    </div>
+    <a class="signin-pill" href="/login.html">Sign in <span>→</span></a>
+  </div>
+
+  <div class="landing-body">
+    <div>
+      <div class="eyebrow">⚡ <span id="eyebrow-txt">Next-Gen Cyber Security &amp; Auth</span></div>
+      <h1 class="wordmark">
+        <span class="w1" id="wm1">APEX</span>
+        <span class="w2" id="wm2">AUTH</span><span class="star">★</span>
+      </h1>
+    </div>
+
+    <div class="landing-right">
+      <p id="tagline">
+        High-performance authentication &amp; licensing engine. Built for zero-trust
+        authorization, hardware locking and live loader telemetry — online, offline
+        and maintenance control in one console.
+      </p>
+      <div class="chips">
+        <div class="chip">🔒 HWID Locked</div>
+        <div class="chip">🛡 AES-256 Encrypted</div>
+        <div class="chip">⚡ Real-time Sync</div>
+        <div class="chip" id="chip-version">v1.0.0</div>
+      </div>
+      <button class="cta" id="enter">
+        Enter Dashboard <span class="arrow">→</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/js/api.js"></script>
+<script>
+(async function () {
+  // loader status strip
+  const pill = document.getElementById('site-pill');
+  try {
+    const d = await API.get('/api/public/status');
+    const apps = d.apps || (d.app ? [d.app] : []);
+    const site = d.site || 'APEX AUTH';
+
+    // brand / wordmark from settings
+    const parts = site.trim().split(/\s+/);
+    document.getElementById('brand-name').textContent = site.toUpperCase();
+    if (parts.length > 1) {
+      document.getElementById('wm1').textContent = parts[0];
+      document.getElementById('wm2').textContent = parts.slice(1).join(' ');
+    } else {
+      document.getElementById('wm1').textContent = site;
+      document.getElementById('wm2').textContent = 'Auth';
+    }
+
+    if (apps.length) {
+      const maint = apps.filter(a => a.status === 'maintenance');
+      const off = apps.filter(a => a.status === 'offline');
+      pill.className = 'pill ' + (maint.length ? 'maintenance' : off.length ? 'offline' : 'online');
+      pill.innerHTML = maint.length
+        ? '<span class="d"></span> Maintenance in progress'
+        : off.length
+          ? '<span class="d"></span> ' + off.length + ' loader(s) offline'
+          : '<span class="d"></span> All systems online';
+      document.getElementById('chip-version').textContent = 'v' + (apps[0].version || '1.0.0');
+    }
+  } catch (e) {
+    pill.className = 'pill offline';
+    pill.innerHTML = '<span class="d"></span> API offline';
+  }
+
+  document.getElementById('enter').onclick = () => location.href = '/app.html';
+})();
+</script>
+</body>
+</html>
