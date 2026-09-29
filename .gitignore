@@ -1,0 +1,12 @@
+node_modules/
+data/*.db
+data/*.db-wal
+data/*.db-shm
+*.log
+.env
+
+# C++ integration build output
+*.obj
+*.exe
+*.pdb
+*.ilk
